@@ -199,10 +199,102 @@ if (!test) {
             answers
         };
 
-        // В реальном приложении здесь был бы код для отправки результатов на сервер
-        alert(`Тест завершен!\nВаш результат: ${score} из ${test.questions.length}`);
-        console.log('Результаты теста:', results);
+        // Вычисляем процент правильных ответов
+        const percentage = Math.round((score / test.questions.length) * 100);
+        const isPassed = percentage >= 60; // Считаем тест пройденным если >= 60%
+        
+        // Формируем сообщение о результате
+        const resultMessage = isPassed 
+            ? `Поздравляем! Вы успешно прошли тест!` 
+            : `К сожалению, тест не пройден. Попробуйте еще раз!`;
+        
+        // Формируем текст письма
+        const emailBody = `
+            Результаты теста "${test.title}"
+            
+            ${resultMessage}
+            
+            Студент: ${studentName}
+            Email студента: ${studentEmail}
+            Результат: ${score} из ${test.questions.length}
+            Процент правильных ответов: ${percentage}%
+            
+            С уважением,
+            Система тестирования
+        `;
+
+        const mailtoLink = `mailto:${test.teacherEmail}?subject=Результаты теста: ${test.title}&body=${encodeURIComponent(emailBody)}`;
+        showResultsModal(results, mailtoLink, isPassed, resultMessage, percentage);
     });
+
+    // Добавим функцию для показа модального окна с результатами
+    function showResultsModal(results, mailtoLink, isPassed, resultMessage, percentage) {
+        const modalHtml = `
+            <div class="modal-overlay">
+                <div class="modal">
+                    <h2>Тест завершен!</h2>
+                    <div class="results-info ${isPassed ? 'passed' : 'failed'}">
+                        <h3>${resultMessage}</h3>
+                        <p>Ваш результат: ${results.score} из ${results.totalQuestions}</p>
+                        <p>Процент правильных ответов: ${percentage}%</p>
+                    </div>
+                    <div class="modal-buttons">
+                        <a href="${mailtoLink}" class="modern-button primary">Отправить результаты на почту</a>
+                        <button onclick="saveAndRedirect()" class="modern-button secondary">Вернуться на главную</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        setTimeout(() => {
+            document.querySelector('.modal-overlay').classList.add('active');
+        }, 10);
+
+        // Отключаем возможность дальнейшего редактирования теста
+        document.querySelectorAll('input[type="radio"]').forEach(input => {
+            input.disabled = true;
+        });
+        document.getElementById('submitTest').disabled = true;
+
+        // Сохраняем результаты в localStorage
+        const testResults = {
+            testId,
+            ...results,
+            completedAt: new Date().toISOString()
+        };
+        localStorage.setItem(`result_${testId}`, JSON.stringify(testResults));
+
+        // Блокируем навигацию назад
+        history.pushState(null, '', window.location.href);
+        window.addEventListener('popstate', function(event) {
+            history.pushState(null, '', window.location.href);
+            showErrorMessage();
+        });
+    }
+
+    // Добавим функцию для показа сообщения об ошибке
+    function showErrorMessage() {
+        const errorHtml = `
+            <div class="modal-overlay active">
+                <div class="modal">
+                    <h2>Внимание!</h2>
+                    <div class="error-message">
+                        <p>Вы уже завершили этот тест. Для повторного прохождения, пожалуйста, используйте оригинальную ссылку на тест.</p>
+                    </div>
+                    <div class="modal-buttons">
+                        <button onclick="window.location.href='index.html'" class="modern-button primary">На главную</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', errorHtml);
+    }
+
+    // Добавим функцию для сохранения результата и редиректа
+    function saveAndRedirect() {
+        window.location.href = 'index.html';
+    }
 
     // Инициализация карусели
     updateCarousel();
