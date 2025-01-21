@@ -572,4 +572,27 @@ label {
     font-size: 1.1rem;
     margin-bottom: 1.5rem;
     color: var(--text-color);
+}
+
+/* Стили для модального окна с результатами */
+.results-info {
+    background-color: var(--input-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+}
+
+.results-info p {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.modal-buttons .modern-button {
+    text-decoration: none;
 } 
