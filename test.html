@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прохождение теста</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <canvas id="bubbles"></canvas>
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider round">
+                <span class="moon">🌙</span>
+                <span class="sun">☀️</span>
+            </div>
+        </label>
+    </div>
+    <div class="container">
+        <h1 id="testTitle">Загрузка теста...</h1>
+        
+        <div class="form-progress">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="progress-status">
+                <span class="progress-text">Пройдено: 0%</span>
+                <span class="questions-count">Вопрос: 0/0</span>
+            </div>
+        </div>
+
+        <div id="studentInfo">
+            <div class="form-group">
+                <label for="studentName">Ваше имя:</label>
+                <input type="text" id="studentName" required class="modern-input">
+            </div>
+            <div class="form-group">
+                <label for="studentEmail">Ваш email:</label>
+                <input type="email" id="studentEmail" required class="modern-input">
+            </div>
+        </div>
+
+        <div class="questions-carousel">
+            <div id="questions" class="questions-container">
+                <!-- Вопросы будут добавлены через JavaScript -->
+            </div>
+            <div class="carousel-controls">
+                <button type="button" class="carousel-arrow prev" disabled>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <div class="carousel-dots">
+                    <!-- Точки будут добавлены через JavaScript -->
+                </div>
+                <button type="button" class="carousel-arrow next" disabled>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="form-buttons">
+            <button id="submitTest" class="modern-button primary" style="margin-left: auto;">Завершить тест</button>
+        </div>
+    </div>
+    <script src="js/bubbles.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/test.js"></script>
+</body>
+</html> 

@@ -1,0 +1,575 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: var(--container-bg);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+    font-size: 2.2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+/* Современные стили для инпутов */
+.modern-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.modern-input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--focus-color);
+}
+
+.modern-select {
+    appearance: none;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 1rem;
+    background-image: url("data:image/svg+xml,...");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+}
+
+/* Стили для блока вопроса */
+.question-block {
+    background-color: var(--question-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    animation: slideDown 0.3s ease-out;
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.question-header-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.question-number {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    padding: 4px 8px;
+    background-color: var(--number-bg);
+    border-radius: 4px;
+}
+
+.answers {
+    display: grid;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.answer-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.answer-label {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--label-bg);
+    color: var(--text-color);
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.correct-answer-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Современные кнопки */
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    gap: 1rem;
+}
+
+.modern-button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    color: var(--button-text);
+}
+
+.modern-button.primary {
+    background-color: var(--button-primary);
+}
+
+.modern-button.primary:hover {
+    background-color: var(--button-primary-hover);
+}
+
+.modern-button.secondary {
+    background-color: var(--button-secondary);
+}
+
+.modern-button.secondary:hover {
+    background-color: var(--button-secondary-hover);
+}
+
+.modern-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Добавляем новые переменные в theme.css */
+:root {
+    --input-bg: white;
+    --focus-color: rgba(52, 152, 219, 0.1);
+    --text-secondary: #666;
+    --secondary-color: #34495e;
+    --number-bg: rgba(52, 152, 219, 0.1);
+    --label-bg: rgba(52, 152, 219, 0.1);
+    --delete-hover: rgba(220, 53, 69, 0.1);
+    --delete-color: #dc3545;
+    --button-text: #ffffff;
+    --button-primary: #3498db;
+    --button-primary-hover: #2980b9;
+    --button-secondary: #34495e;
+    --button-secondary-hover: #2c3e50;
+    --progress-bg: rgba(52, 152, 219, 0.1);
+    --progress-fill: #3498db;
+    --tooltip-bg: rgba(0, 0, 0, 0.8);
+    --tooltip-text: #ffffff;
+    --dot-inactive: rgba(52, 152, 219, 0.2);
+    --dot-active: var(--primary-color);
+    --button-disabled: #ccc;
+    --hover-bg: rgba(52, 152, 219, 0.05);
+}
+
+[data-theme="dark"] {
+    --input-bg: #2d2d2d;
+    --focus-color: rgba(97, 218, 251, 0.1);
+    --text-secondary: #999;
+    --secondary-color: #455a79;
+    --number-bg: rgba(97, 218, 251, 0.1);
+    --label-bg: rgba(97, 218, 251, 0.1);
+    --delete-hover: rgba(220, 53, 69, 0.2);
+    --delete-color: #ff4d5e;
+    --button-text: rgba(255, 255, 255, 0.9);
+    --button-primary: #2980b9;
+    --button-primary-hover: #3498db;
+    --button-secondary: #2c3e50;
+    --button-secondary-hover: #34495e;
+    --progress-bg: rgba(97, 218, 251, 0.1);
+    --progress-fill: #2980b9;
+    --tooltip-bg: rgba(255, 255, 255, 0.9);
+    --tooltip-text: #000000;
+    --dot-inactive: rgba(97, 218, 251, 0.2);
+    --dot-active: var(--primary-color);
+    --button-disabled: #444;
+    --hover-bg: rgba(97, 218, 251, 0.05);
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.question-block {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Добавляем стили для кнопки удаления */
+.btn-delete {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    opacity: 0.6;
+}
+
+.btn-delete:hover {
+    opacity: 1;
+    background-color: var(--delete-hover);
+    color: var(--delete-color);
+}
+
+/* Стили для модального окна */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal {
+    background-color: var(--container-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+}
+
+.modal-overlay.active .modal {
+    transform: translateY(0);
+}
+
+.modal h2 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.modal p {
+    margin-bottom: 1.5rem;
+    color: var(--text-secondary);
+}
+
+.test-url {
+    background-color: var(--input-bg);
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.test-url input {
+    flex: 1;
+    border: none;
+    background: none;
+    color: var(--text-color);
+    font-family: monospace;
+}
+
+.copy-button {
+    background-color: var(--button-secondary);
+    color: var(--button-text);
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.copy-button:hover {
+    background-color: var(--button-secondary-hover);
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background-color: var(--border-color);
+    border-radius: 2px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--primary-color);
+    width: 0;
+    transition: width 0.3s ease;
+}
+
+.question-block.removing {
+    animation: slideOut 0.3s ease forwards;
+}
+
+@keyframes slideOut {
+    to {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+}
+
+.form-progress {
+    margin-bottom: 2rem;
+}
+
+.progress-status {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background-color: var(--progress-bg);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--progress-fill);
+    width: 0;
+    transition: width 0.3s ease;
+}
+
+/* Стили для тултипов */
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]:before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 10px;
+    background-color: var(--tooltip-bg);
+    color: var(--tooltip-text);
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+[data-tooltip]:hover:before {
+    opacity: 1;
+    visibility: visible;
+    bottom: calc(100% + 5px);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.question-block {
+    animation: slideDown 0.3s ease-out;
+}
+
+/* Добавляем стили для карусели вопросов */
+.questions-carousel {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.questions-container {
+    display: flex;
+    transition: transform 0.3s ease;
+}
+
+.question-block {
+    min-width: 100%;
+    flex-shrink: 0;
+}
+
+.carousel-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.carousel-dots {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.carousel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--dot-inactive);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-dot.active {
+    background-color: var(--dot-active);
+    transform: scale(1.2);
+}
+
+.carousel-arrow {
+    background-color: var(--button-secondary);
+    border: none;
+    color: var(--button-text);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-arrow:hover:not(:disabled) {
+    background-color: var(--button-secondary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.carousel-arrow:disabled {
+    background-color: var(--button-disabled);
+    cursor: not-allowed;
+    opacity: 0.5;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Стили для ответов в тесте */
+.answer-option {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.answer-option:hover {
+    border-color: var(--primary-color);
+    background-color: var(--hover-bg);
+}
+
+.answer-option input[type="radio"] {
+    display: none;
+}
+
+.answer-option input[type="radio"]:checked + .answer-text {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.answer-option input[type="radio"]:checked + .answer-text::before {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.answer-text {
+    position: relative;
+    padding-left: 2rem;
+    color: var(--text-color);
+}
+
+.answer-text::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.question-text {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+} 

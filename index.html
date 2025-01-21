@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание теста</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <canvas id="bubbles"></canvas>
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider round">
+                <span class="moon">🌙</span>
+                <span class="sun">☀️</span>
+            </div>
+        </label>
+    </div>
+    <div class="container">
+        <h1>Создание нового теста</h1>
+        <div class="form-progress">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="progress-status">
+                <span class="progress-text">Заполнено: 0%</span>
+                <span class="questions-count">Вопросов: 1</span>
+            </div>
+        </div>
+        <form id="testForm">
+            <div class="form-group">
+                <label for="testTitle">Название теста:</label>
+                <input type="text" id="testTitle" required class="modern-input">
+            </div>
+            
+            <div class="form-group">
+                <label for="teacherEmail">Ваш email:</label>
+                <input type="email" id="teacherEmail" required class="modern-input">
+            </div>
+
+            <div class="questions-carousel">
+                <div id="questions" class="questions-container">
+                    <div class="question-block">
+                        <div class="question-header">
+                            <h3>Вопрос 1</h3>
+                            <span class="question-number">1/1</span>
+                        </div>
+                        <input type="text" class="question-text modern-input" placeholder="Введите вопрос" required>
+                        
+                        <div class="answers">
+                            <div class="answer-wrapper">
+                                <span class="answer-label">A</span>
+                                <input type="text" class="answer modern-input" placeholder="Вариант ответа 1" required>
+                            </div>
+                            <div class="answer-wrapper">
+                                <span class="answer-label">B</span>
+                                <input type="text" class="answer modern-input" placeholder="Вариант ответа 2" required>
+                            </div>
+                            <div class="answer-wrapper">
+                                <span class="answer-label">C</span>
+                                <input type="text" class="answer modern-input" placeholder="Вариант ответа 3">
+                            </div>
+                            <div class="answer-wrapper">
+                                <span class="answer-label">D</span>
+                                <input type="text" class="answer modern-input" placeholder="Вариант ответа 4">
+                            </div>
+                        </div>
+                        
+                        <div class="correct-answer-wrapper">
+                            <label>Правильный ответ:</label>
+                            <select class="correct-answer modern-select">
+                                <option value="0">Вариант A</option>
+                                <option value="1">Вариант B</option>
+                                <option value="2">Вариант C</option>
+                                <option value="3">Вариант D</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-controls">
+                    <button type="button" class="carousel-arrow prev" disabled>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <div class="carousel-dots">
+                        <span class="carousel-dot active"></span>
+                    </div>
+                    <button type="button" class="carousel-arrow next" disabled>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-buttons">
+                <button type="button" id="addQuestion" class="modern-button secondary" data-tooltip="Добавить новый вопрос">+ Добавить вопрос</button>
+                <button type="submit" class="modern-button primary" data-tooltip="Сохранить и получить ссылку">Создать тест</button>
+            </div>
+        </form>
+    </div>
+    <script src="js/bubbles.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/create.js"></script>
+</body>
+</html> 
