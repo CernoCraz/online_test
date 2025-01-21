@@ -218,44 +218,17 @@ if (!test) {
 
     // Функция для показа модального окна с результатами
     function showResultsModal(results, mailtoLink) {
-        // Вычисляем процент правильных ответов
-        const percentage = Math.round((results.score / results.totalQuestions) * 100);
-        const isPassed = percentage >= 60; // Считаем тест пройденным если >= 60%
-        
-        // Формируем сообщение о результате
-        const resultMessage = isPassed 
-            ? `Поздравляем! Вы успешно прошли тест!` 
-            : `К сожалению, тест не пройден. Попробуйте еще раз!`;
-        
-        // Формируем текст письма
-        const emailBody = `
-            Результаты теста "${results.testTitle}"
-            
-            ${resultMessage}
-            
-            Студент: ${results.studentName}
-            Email студента: ${results.studentEmail}
-            Результат: ${results.score} из ${results.totalQuestions}
-            Процент правильных ответов: ${percentage}%
-            
-            С уважением,
-            Система тестирования
-        `;
-
-        const mailtoLink = `mailto:${results.teacherEmail}?subject=Результаты теста: ${results.testTitle}&body=${encodeURIComponent(emailBody)}`;
-
         const modalHtml = `
             <div class="modal-overlay">
                 <div class="modal">
                     <h2>Тест завершен!</h2>
-                    <div class="results-info ${isPassed ? 'passed' : 'failed'}">
-                        <h3>${resultMessage}</h3>
+                    <div class="results-info">
                         <p>Ваш результат: ${results.score} из ${results.totalQuestions}</p>
-                        <p>Процент правильных ответов: ${percentage}%</p>
+                        <p>Процент правильных ответов: ${Math.round((results.score / results.totalQuestions) * 100)}%</p>
                     </div>
                     <div class="modal-buttons">
                         <a href="${mailtoLink}" class="modern-button primary">Отправить результаты на почту</a>
-                        <button onclick="saveAndRedirect()" class="modern-button secondary">Вернуться на главную</button>
+                        <button onclick="window.location.href='index.html'" class="modern-button secondary">Вернуться на главную</button>
                     </div>
                 </div>
             </div>
@@ -271,44 +244,6 @@ if (!test) {
             input.disabled = true;
         });
         document.getElementById('submitTest').disabled = true;
-
-        // Сохраняем результаты в localStorage
-        const testResults = {
-            testId,
-            ...results,
-            completedAt: new Date().toISOString()
-        };
-        localStorage.setItem(`result_${testId}`, JSON.stringify(testResults));
-
-        // Блокируем навигацию назад
-        history.pushState(null, '', window.location.href);
-        window.addEventListener('popstate', function(event) {
-            history.pushState(null, '', window.location.href);
-            showErrorMessage();
-        });
-    }
-
-    // Функция для показа сообщения об ошибке при попытке вернуться назад
-    function showErrorMessage() {
-        const errorHtml = `
-            <div class="modal-overlay active">
-                <div class="modal">
-                    <h2>Внимание!</h2>
-                    <div class="error-message">
-                        <p>Вы уже завершили этот тест. Для повторного прохождения, пожалуйста, используйте оригинальную ссылку на тест.</p>
-                    </div>
-                    <div class="modal-buttons">
-                        <button onclick="window.location.href='index.html'" class="modern-button primary">На главную</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', errorHtml);
-    }
-
-    // Функция для сохранения результата и редиректа
-    function saveAndRedirect() {
-        window.location.href = 'index.html';
     }
 
     // Инициализация карусели
