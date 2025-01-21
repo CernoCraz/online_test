@@ -199,52 +199,10 @@ if (!test) {
             answers
         };
 
-        // Формируем содержимое письма
-        const emailBody = `
-            Результаты теста "${test.title}"
-            
-            Студент: ${studentName}
-            Email студента: ${studentEmail}
-            Результат: ${score} из ${test.questions.length}
-            Процент правильных ответов: ${Math.round((score / test.questions.length) * 100)}%
-        `;
-
-        // Создаем ссылку для отправки письма
-        const mailtoLink = `mailto:${test.teacherEmail}?subject=Результаты теста: ${test.title}&body=${encodeURIComponent(emailBody)}`;
-        
-        // Показываем модальное окно с результатами
-        showResultsModal(results, mailtoLink);
+        // В реальном приложении здесь был бы код для отправки результатов на сервер
+        alert(`Тест завершен!\nВаш результат: ${score} из ${test.questions.length}`);
+        console.log('Результаты теста:', results);
     });
-
-    // Функция для показа модального окна с результатами
-    function showResultsModal(results, mailtoLink) {
-        const modalHtml = `
-            <div class="modal-overlay">
-                <div class="modal">
-                    <h2>Тест завершен!</h2>
-                    <div class="results-info">
-                        <p>Ваш результат: ${results.score} из ${results.totalQuestions}</p>
-                        <p>Процент правильных ответов: ${Math.round((results.score / results.totalQuestions) * 100)}%</p>
-                    </div>
-                    <div class="modal-buttons">
-                        <a href="${mailtoLink}" class="modern-button primary">Отправить результаты на почту</a>
-                        <button onclick="window.location.href='index.html'" class="modern-button secondary">Вернуться на главную</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
-        setTimeout(() => {
-            document.querySelector('.modal-overlay').classList.add('active');
-        }, 10);
-
-        // Отключаем возможность дальнейшего редактирования теста
-        document.querySelectorAll('input[type="radio"]').forEach(input => {
-            input.disabled = true;
-        });
-        document.getElementById('submitTest').disabled = true;
-    }
 
     // Инициализация карусели
     updateCarousel();
