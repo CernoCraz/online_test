@@ -1,15 +1,22 @@
+// Глобальные переменные
 let currentQuestion = 0;
 let test = null;
 
-// Получаем ID теста из URL
-const urlParams = new URLSearchParams(window.location.search);
-const testId = urlParams.get('id');
+// Загружаем тест при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const testId = urlParams.get('id');
+    test = JSON.parse(localStorage.getItem(`test_${testId}`));
 
-// Загружаем тест из localStorage
-test = JSON.parse(localStorage.getItem(`test_${testId}`));
+    if (!test) {
+        showWelcomeMessage();
+    } else {
+        initializeTest();
+    }
+});
 
-// Если теста нет, показываем заглушку
-if (!test) {
+// Показываем приветственное сообщение
+function showWelcomeMessage() {
     document.getElementById('testTitle').textContent = 'Добро пожаловать!';
     document.querySelector('.form-progress').style.display = 'none';
     document.getElementById('questions').innerHTML = `
@@ -27,15 +34,17 @@ if (!test) {
     document.querySelector('.carousel-controls').style.display = 'none';
     document.getElementById('submitTest').style.display = 'none';
     document.getElementById('studentInfo').style.display = 'none';
-} else {
-    // Отображаем название теста
-    document.getElementById('testTitle').textContent = test.title;
+}
 
+// Инициализируем тест
+function initializeTest() {
+    document.getElementById('testTitle').textContent = test.title;
+    
     // Создаем вопросы
-    function createQuestionBlock(question, index) {
-        const questionDiv = document.createElement('div');
-        questionDiv.className = 'question-block';
-        questionDiv.innerHTML = `
+    test.questions.forEach((question, index) => {
+        const questionBlock = document.createElement('div');
+        questionBlock.className = 'question-block';
+        questionBlock.innerHTML = `
             <div class="question-header">
                 <h3>Вопрос ${index + 1}</h3>
                 <span class="question-number">${index + 1}/${test.questions.length}</span>
@@ -53,55 +62,17 @@ if (!test) {
                 `).join('')}
             </div>
         `;
-        return questionDiv;
-    }
-
-    // Обновляем карусель
-    function updateCarousel() {
-        const container = document.querySelector('.questions-container');
-        container.style.transform = `translateX(-${currentQuestion * 100}%)`;
-        
-        // Обновляем точки
-        const dots = document.querySelector('.carousel-dots');
-        dots.innerHTML = test.questions.map((_, i) => 
-            `<span class="carousel-dot ${i === currentQuestion ? 'active' : ''}" data-index="${i}"></span>`
-        ).join('');
-
-        // Обновляем состояние кнопок
-        const prevButton = document.querySelector('.carousel-arrow.prev');
-        const nextButton = document.querySelector('.carousel-arrow.next');
-        prevButton.disabled = currentQuestion === 0;
-        nextButton.disabled = currentQuestion === test.questions.length - 1;
-
-        // Обновляем прогресс
-        updateProgress();
-    }
-
-    // Обновляем прогресс
-    function updateProgress() {
-        const questions = document.querySelectorAll('.question-block');
-        let answered = 0;
-
-        questions.forEach(block => {
-            if (block.querySelector('input[type="radio"]:checked')) {
-                answered++;
-            }
-        });
-
-        const progress = (answered / questions.length) * 100;
-        document.querySelector('.progress-fill').style.width = `${progress}%`;
-        document.querySelector('.progress-text').textContent = `Пройдено: ${Math.round(progress)}%`;
-        document.querySelector('.questions-count').textContent = 
-            `Вопрос: ${currentQuestion + 1}/${questions.length}`;
-    }
-
-    // Инициализация теста
-    test.questions.forEach((question, index) => {
-        const questionBlock = createQuestionBlock(question, index);
         document.getElementById('questions').appendChild(questionBlock);
     });
 
-    // Обработчики для кнопок карусели
+    // Добавляем обработчики событий
+    setupEventListeners();
+    updateCarousel();
+}
+
+// Настраиваем обработчики событий
+function setupEventListeners() {
+    // Кнопки навигации
     document.querySelector('.carousel-arrow.prev').addEventListener('click', () => {
         if (currentQuestion > 0) {
             currentQuestion--;
@@ -116,7 +87,7 @@ if (!test) {
         }
     });
 
-    // Обработчик для точек
+    // Точки навигации
     document.querySelector('.carousel-dots').addEventListener('click', (e) => {
         if (e.target.classList.contains('carousel-dot')) {
             currentQuestion = parseInt(e.target.dataset.index);
@@ -124,178 +95,194 @@ if (!test) {
         }
     });
 
-    // Обработчик изменения ответов
-    document.getElementById('questions').addEventListener('change', updateProgress);
-
-    // Поддержка свайпов для мобильных устройств
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    document.querySelector('.questions-carousel').addEventListener('touchstart', e => {
-        touchStartX = e.changedTouches[0].screenX;
+    // Отслеживаем ответы
+    document.getElementById('questions').addEventListener('change', () => {
+        const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+        const progress = (answered / test.questions.length) * 100;
+        document.querySelector('.progress-fill').style.width = `${progress}%`;
+        document.querySelector('.progress-text').textContent = `Пройдено: ${Math.round(progress)}%`;
     });
 
-    document.querySelector('.questions-carousel').addEventListener('touchend', e => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    });
+    // Кнопка завершения теста
+    document.getElementById('submitTest').addEventListener('click', finishTest);
+}
 
-    function handleSwipe() {
-        const swipeThreshold = 50;
-        const diff = touchStartX - touchEndX;
+// Обновляем карусель
+function updateCarousel() {
+    const container = document.querySelector('.questions-container');
+    container.style.transform = `translateX(-${currentQuestion * 100}%)`;
+    
+    const dots = document.querySelector('.carousel-dots');
+    dots.innerHTML = test.questions.map((_, i) => 
+        `<span class="carousel-dot ${i === currentQuestion ? 'active' : ''}" data-index="${i}"></span>`
+    ).join('');
 
-        if (Math.abs(diff) > swipeThreshold) {
-            if (diff > 0 && currentQuestion < test.questions.length - 1) {
-                currentQuestion++;
-                updateCarousel();
-            } else if (diff < 0 && currentQuestion > 0) {
-                currentQuestion--;
-                updateCarousel();
-            }
-        }
+    const prevButton = document.querySelector('.carousel-arrow.prev');
+    const nextButton = document.querySelector('.carousel-arrow.next');
+    prevButton.disabled = currentQuestion === 0;
+    nextButton.disabled = currentQuestion === test.questions.length - 1;
+
+    document.querySelector('.questions-count').textContent = 
+        `Вопрос: ${currentQuestion + 1}/${test.questions.length}`;
+}
+
+// Завершаем тест
+function finishTest() {
+    const studentName = document.getElementById('studentName').value;
+    const studentEmail = document.getElementById('studentEmail').value;
+
+    if (!studentName || !studentEmail) {
+        alert('Пожалуйста, введите ваше имя и email');
+        return;
     }
 
-    // Обработчик отправки теста
-    document.getElementById('submitTest').addEventListener('click', () => {
-        const studentName = document.getElementById('studentName').value;
-        const studentEmail = document.getElementById('studentEmail').value;
+    let score = 0;
+    const answers = [];
+    let allAnswered = true;
 
-        if (!studentName || !studentEmail) {
-            alert('Пожалуйста, введите ваше имя и email');
+    test.questions.forEach((question, index) => {
+        const selectedAnswer = document.querySelector(`input[name="q${index}"]:checked`);
+        if (!selectedAnswer) {
+            allAnswered = false;
             return;
         }
-
-        let score = 0;
-        const answers = [];
-        let allAnswered = true;
-
-        test.questions.forEach((question, index) => {
-            const selectedAnswer = document.querySelector(`input[name="q${index}"]:checked`);
-            if (!selectedAnswer) {
-                allAnswered = false;
-                return;
-            }
-            
-            const answerIndex = parseInt(selectedAnswer.value);
-            answers.push(answerIndex);
-            
-            if (answerIndex === question.correctAnswer) {
-                score++;
-            }
-        });
-
-        if (!allAnswered) {
-            alert('Пожалуйста, ответьте на все вопросы');
-            return;
+        
+        const answerIndex = parseInt(selectedAnswer.value);
+        answers.push(answerIndex);
+        
+        if (answerIndex === question.correctAnswer) {
+            score++;
         }
-
-        const results = {
-            testTitle: test.title,
-            studentName,
-            studentEmail,
-            teacherEmail: test.teacherEmail,
-            score,
-            totalQuestions: test.questions.length,
-            answers
-        };
-
-        // Вычисляем процент правильных ответов
-        const percentage = Math.round((score / test.questions.length) * 100);
-        const isPassed = percentage >= 60; // Считаем тест пройденным если >= 60%
-        
-        // Формируем сообщение о результате
-        const resultMessage = isPassed 
-            ? `Поздравляем! Вы успешно прошли тест!` 
-            : `К сожалению, тест не пройден. Попробуйте еще раз!`;
-        
-        // Формируем текст письма
-        const emailBody = `
-            Результаты теста "${test.title}"
-            
-            ${resultMessage}
-            
-            Студент: ${studentName}
-            Email студента: ${studentEmail}
-            Результат: ${score} из ${test.questions.length}
-            Процент правильных ответов: ${percentage}%
-            
-            С уважением,
-            Система тестирования
-        `;
-
-        const mailtoLink = `mailto:${test.teacherEmail}?subject=Результаты теста: ${test.title}&body=${encodeURIComponent(emailBody)}`;
-        showResultsModal(results, mailtoLink, isPassed, resultMessage, percentage);
     });
 
-    // Добавим функцию для показа модального окна с результатами
-    function showResultsModal(results, mailtoLink, isPassed, resultMessage, percentage) {
-        const modalHtml = `
-            <div class="modal-overlay">
-                <div class="modal">
-                    <h2>Тест завершен!</h2>
-                    <div class="results-info ${isPassed ? 'passed' : 'failed'}">
-                        <h3>${resultMessage}</h3>
-                        <p>Ваш результат: ${results.score} из ${results.totalQuestions}</p>
-                        <p>Процент правильных ответов: ${percentage}%</p>
-                    </div>
-                    <div class="modal-buttons">
-                        <a href="${mailtoLink}" class="modern-button primary">Отправить результаты на почту</a>
-                        <button onclick="saveAndRedirect()" class="modern-button secondary">Вернуться на главную</button>
-                    </div>
+    if (!allAnswered) {
+        alert('Пожалуйста, ответьте на все вопросы');
+        return;
+    }
+
+    const percentage = Math.round((score / test.questions.length) * 100);
+    const isPassed = percentage >= 60;
+    
+    showResults({
+        testTitle: test.title,
+        studentName,
+        studentEmail,
+        score,
+        totalQuestions: test.questions.length,
+        percentage,
+        isPassed
+    });
+}
+
+// Показываем результаты
+function showResults(results) {
+    // Удаляем старые модальные окна
+    document.querySelectorAll('.modal-overlay').forEach(modal => modal.remove());
+
+    // Создаем элементы
+    const modalOverlay = document.createElement('div');
+    const modal = document.createElement('div');
+    const title = document.createElement('h2');
+    const resultsInfo = document.createElement('div');
+    const buttonsDiv = document.createElement('div');
+
+    // Настраиваем классы
+    modalOverlay.className = 'modal-overlay active';
+    modal.className = 'modal';
+    resultsInfo.className = `results-info ${results.isPassed ? 'passed' : 'failed'}`;
+    buttonsDiv.className = 'modal-buttons';
+
+    // Создаем содержимое
+    title.textContent = 'Тест завершен!';
+    
+    const resultMessage = results.isPassed 
+        ? 'Поздравляем! Вы успешно прошли тест!' 
+        : 'К сожалению, тест не пройден. Попробуйте еще раз!';
+
+    resultsInfo.innerHTML = `
+        <h3>${resultMessage}</h3>
+        <p>Ваш результат: ${results.score} из ${results.totalQuestions}</p>
+        <p>Процент правильных ответов: ${results.percentage}%</p>
+    `;
+
+    // Создаем кнопки
+    const submitButton = document.createElement('button');
+    submitButton.type = 'button';
+    submitButton.className = 'modern-button primary';
+    submitButton.textContent = 'Отправить результаты';
+
+    const returnButton = document.createElement('button');
+    returnButton.type = 'button';
+    returnButton.className = 'modern-button secondary';
+    returnButton.textContent = 'Вернуться на главную';
+
+    // Добавляем обработчик для отправки результатов
+    submitButton.addEventListener('click', () => {
+        // Создаем форму
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'https://formsubmit.co/mr.kartichev@mail.ru';
+
+        // Добавляем скрытые поля с данными
+        const hiddenFields = {
+            'Тест': results.testTitle,
+            'Студент': results.studentName,
+            'Email студента': results.studentEmail,
+            'Результат': `${results.score} из ${results.totalQuestions}`,
+            'Процент': `${results.percentage}%`,
+            'Статус': results.isPassed ? 'Тест пройден' : 'Тест не пройден',
+            '_subject': `Результаты теста: ${results.testTitle}`,
+            '_template': 'table',
+            '_captcha': 'false',
+            '_next': `${window.location.origin}/success.html`
+        };
+
+        // Добавляем поля в форму
+        Object.entries(hiddenFields).forEach(([name, value]) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+        });
+
+        // Показываем уведомление
+        modalOverlay.remove();
+        const notification = document.createElement('div');
+        notification.className = 'modal-overlay active';
+        notification.innerHTML = `
+            <div class="modal">
+                <h2>Отправка результатов</h2>
+                <div class="results-info">
+                    <h3>Пожалуйста, подождите...</h3>
+                    <p>Результаты отправляются на сервер.</p>
                 </div>
             </div>
         `;
-        
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
-        setTimeout(() => {
-            document.querySelector('.modal-overlay').classList.add('active');
-        }, 10);
+        document.body.appendChild(notification);
 
-        // Отключаем возможность дальнейшего редактирования теста
-        document.querySelectorAll('input[type="radio"]').forEach(input => {
-            input.disabled = true;
-        });
-        document.getElementById('submitTest').disabled = true;
+        // Отправляем форму
+        document.body.appendChild(form);
+        form.submit();
+    });
 
-        // Сохраняем результаты в localStorage
-        const testResults = {
-            testId,
-            ...results,
-            completedAt: new Date().toISOString()
-        };
-        localStorage.setItem(`result_${testId}`, JSON.stringify(testResults));
+    returnButton.addEventListener('click', () => window.location.href = 'success.html');
 
-        // Блокируем навигацию назад
-        history.pushState(null, '', window.location.href);
-        window.addEventListener('popstate', function(event) {
-            history.pushState(null, '', window.location.href);
-            showErrorMessage();
-        });
-    }
+    // Собираем структуру
+    buttonsDiv.appendChild(submitButton);
+    buttonsDiv.appendChild(returnButton);
 
-    // Добавим функцию для показа сообщения об ошибке
-    function showErrorMessage() {
-        const errorHtml = `
-            <div class="modal-overlay active">
-                <div class="modal">
-                    <h2>Внимание!</h2>
-                    <div class="error-message">
-                        <p>Вы уже завершили этот тест. Для повторного прохождения, пожалуйста, используйте оригинальную ссылку на тест.</p>
-                    </div>
-                    <div class="modal-buttons">
-                        <button onclick="window.location.href='index.html'" class="modern-button primary">На главную</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', errorHtml);
-    }
+    modal.appendChild(title);
+    modal.appendChild(resultsInfo);
+    modal.appendChild(buttonsDiv);
+    modalOverlay.appendChild(modal);
 
-    // Добавим функцию для сохранения результата и редиректа
-    function saveAndRedirect() {
-        window.location.href = 'index.html';
-    }
+    // Добавляем на страницу
+    document.body.appendChild(modalOverlay);
 
-    // Инициализация карусели
-    updateCarousel();
-} 
+    // Отключаем возможность редактирования теста
+    document.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.disabled = true;
+    });
+    document.getElementById('submitTest').disabled = true;
+}
